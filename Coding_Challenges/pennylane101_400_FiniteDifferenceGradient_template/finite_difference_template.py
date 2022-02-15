@@ -17,11 +17,21 @@ def my_finite_diff_grad(params):
     Returns:
         - gradients (np.ndarray): the gradient w.r.t. each parameter
     """
+    delta=1e-10
 
     gradients = np.zeros([len(params)])
+
+    def fine_diff(big,small,delta):
+        return (big-small)/delta
+
     for i in range(len(params)):
         # QHACK # 
-
+        param_plus=params.copy()
+        param_minus=params.copy()
+        param_plus[i]+=delta/2
+        param_minus[i]-=delta/2
+    
+        gradients[i]=fine_diff(cost(param_plus),cost(param_minus),delta)
         # QHACK #
 
     return gradients

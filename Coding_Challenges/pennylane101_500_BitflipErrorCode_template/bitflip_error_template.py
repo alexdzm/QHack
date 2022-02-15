@@ -20,9 +20,20 @@ def error_wire(circuit_output):
         e.g., [0.28, 0.0, 0.72, 0.0] means a 28% chance no bitflip error occurs, but if one
         does occur it occurs on qubit #2 with a 72% chance.
     """
-
+    
     # QHACK #
-
+    out=circuit_output
+    p0=np.trace(np.matmul(np.outer([alpha,0,0,0,0,0,0,np.sqrt(1-alpha**2)],[alpha,0,0,0,0,0,0,np.sqrt(1-alpha**2)]),out))
+    p1=np.trace(np.matmul(np.outer([0,0,0,np.sqrt(1-alpha**2),alpha,0,0,0],[0,0,0,np.sqrt(1-alpha**2),alpha,0,0,0]),out))
+    p2=np.trace(np.matmul(np.outer([0,0,alpha,0,0,np.sqrt(1-alpha**2),0,0],[0,0,alpha,0,0,np.sqrt(1-alpha**2),0,0]),out))
+    p3=np.trace(np.matmul(np.outer([0,alpha,0,0,0,0,np.sqrt(1-alpha**2),0],[0,alpha,0,0,0,0,np.sqrt(1-alpha**2),0]),out))
+    '''
+    p0=np.dot([alpha,0,0,0,0,0,0,np.sqrt(1-alpha**2)],np.sqrt(circuit_output))
+    p1=np.dot([0,0,0,np.sqrt(1-alpha**2),alpha,0,0,0],np.sqrt(circuit_output))
+    p2=np.dot([0,0,alpha,0,0,np.sqrt(1-alpha**2),0,0],np.sqrt(circuit_output))
+    p3=np.dot([0,alpha,0,0,0,0,np.sqrt(1-alpha**2),0],np.sqrt(circuit_output))'''
+    
+    return np.real([p0,p1,p2,p3])
     # process the circuit output here and return which qubit was the victim of a bitflip error!
 
     # QHACK #
@@ -51,6 +62,8 @@ def circuit(p, alpha, tampered_wire):
     # QHACK #
 
     # put any input processing gates here
+    qml.CNOT(wires=[0,1])
+    qml.CNOT(wires=[0,2])
 
     qml.BitFlip(p, wires=int(tampered_wire))
 
@@ -58,6 +71,9 @@ def circuit(p, alpha, tampered_wire):
 
     # return something!
     # QHACK #
+    return qml.state()
+
+    #return qml.expval(qml.PauliZ(0) @ qml.PauliZ(1) @ qml.PauliZ(2))
 
 
 def density_matrix(alpha):

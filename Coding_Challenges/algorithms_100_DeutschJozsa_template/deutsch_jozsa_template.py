@@ -20,13 +20,15 @@ def deutsch_jozsa(oracle):
         """Implements the Deutsch Jozsa algorithm."""
 
         # QHACK #
-
+        for i in range(3):
+            qml.Hadamard(wires=i)
         # Insert any pre-oracle processing here
 
         oracle()  # DO NOT MODIFY this line
 
         # Insert any post-oracle processing here
-
+        for i in range(2):
+            qml.Hadamard(wires=i)
         # QHACK #
 
         return qml.sample(wires=range(2))
@@ -36,7 +38,11 @@ def deutsch_jozsa(oracle):
     # QHACK #
 
     # From `sample` (a single call to the circuit), determine whether the function is constant or balanced.
-
+    ans=np.dot(sample,sample)
+    if ans==0:
+        return 'balanced'
+    if ans==1:
+        return 'constant'
     # QHACK #
 
 

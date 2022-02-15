@@ -33,9 +33,13 @@ def compare_circuits(num_wires, params):
 
     # QHACK #
     # define devices
+    dev_pure = qml.device('default.qubit', wires=num_wires)
+    dev_mixed = qml.device('default.mixed', wires=num_wires)
+ 
 
     # add a decorator here
-    def pure_circuit():
+    @qml.qnode(dev_pure)
+    def pure_circuit(num_wires,params):
         """A circuit that contains `num_wires` y-rotation gates.
         The argument params[0] are the parameters you should use here to define the y-rotations.
 
@@ -43,10 +47,13 @@ def compare_circuits(num_wires, params):
             - (np.tensor): A state vector
         """
         # create the circuit here
+        for i in range(num_wires):
+            qml.RY(params[i],wires=i)
         return qml.state()
 
     # add a decorator here
-    def mixed_circuit():
+    @qml.qnode(dev_mixed)
+    def mixed_circuit(num_wires,params):
         """A circuit that contains `num_wires` y-rotation gates.
         The argument params[1] are the parameters you should use here to define the y-rotations.
 
@@ -54,16 +61,20 @@ def compare_circuits(num_wires, params):
             - (np.tensor): A density matrix
         """
         # create the circuit here
+        for i in range(num_wires):
+            qml.RY(params[i],wires=i)
         return qml.state()
 
     # QHACK #
 
     # DO NOT MODIFY any of the next lines in this scope
-    mixed_state = mixed_circuit()
-    pure_state = pure_circuit()
+    mixed_state =  mixed_circuit(num_wires,params[1])
+    pure_state = pure_circuit(num_wires,params[0])
     mat_norm = matrix_norm(mixed_state, pure_state)
 
+
     return mat_norm
+
 
 
 if __name__ == "__main__":
